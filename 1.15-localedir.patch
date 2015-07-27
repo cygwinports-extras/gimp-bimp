@@ -1,0 +1,16 @@
+--- origsrc/gimp-plugin-bimp-1.15/src/bimp-utils.c	2015-07-12 13:46:38.000000000 -0500
++++ src/gimp-plugin-bimp-1.15/src/bimp-utils.c	2015-07-27 15:30:49.339078500 -0500
+@@ -163,8 +163,13 @@ char* get_user_dir()
+ 
+ char* get_bimp_localedir() 
+ {
++
+ 	int bufsize = 1024;
+ 	char* path = g_malloc0(bufsize);
++#ifdef LOCALEDIR
++	sprintf(path, "%s", LOCALEDIR);
++	return path;
++#endif
+ 	
+ 	// different methods for getting the plugin's absolute path, for different systems
+ #ifdef __unix__

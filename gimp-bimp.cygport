@@ -1,0 +1,30 @@
+NAME="gimp-bimp"
+VERSION=1.15
+RELEASE=1
+CATEGORY="Graphics"
+SUMMARY="Batch image manipulation plugin for GIMP"
+DESCRIPTION="With BIMP you can apply a set of GIMP manipulations on groups of images."
+HOMEPAGE="http://www.alessandrofrancesconi.it/projects/bimp/"
+SRC_URI="https://github.com/alessandrofrancesconi/gimp-plugin-bimp/archive/v${VERSION}/gimp-plugin-bimp-v${VERSION}.tar.gz"
+SRC_DIR="gimp-plugin-bimp-${VERSION}"
+PATCH_URI="1.15-localedir.patch"
+
+src_compile() {
+	check_pkg_config BIMP gimpui-2.0 libpcre
+	verbose ${CC} ${CFLAGS} ${BIMP_CFLAGS} \
+		-DLOCALEDIR="\"/usr/share/locale\"" \
+		-o ${B}/bimp.exe \
+		${S}/src/*.c ${S}/src/manipulation-gui/*.c ${BIMP_LIBS}
+}
+
+src_install() {
+	exeinto $(${PKG_CONFIG} --variable=gimplibdir gimp-2.0)/plug-ins
+	doexe ${B}/bimp.exe
+
+	pushd ${S}/bimp-locale
+	for f in */*/*.mo
+	do
+		insinto /usr/share/locale/${f%/*}
+		doins $f
+	done
+}
